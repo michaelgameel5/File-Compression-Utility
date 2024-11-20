@@ -1,13 +1,24 @@
+import collections
+import os
+
 class FileCompressionUtility:
     def __init__(self):
-        self.frequency_table = {}
+        self.frequency_table = collections.Counter()
         self.huffman_tree = None
         self.huffman_codes = {}
     
     # Frequency table generation
     def build_frequency_table(self, file_path):
-        pass
-    
+        if not os.path.exists(file_path):
+            print(f"Error: The file '{file_path}' does not exist.")
+            return
+        
+        try:
+            with open(file_path, "r") as file:
+                self.frequency_table = collections.Counter(file.read())
+        except IOError as e:
+            print(f"An error occurred while opening the file: {e}")
+            
     # Huffman tree construction
     def build_huffman_tree(self):
         pass
