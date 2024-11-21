@@ -33,8 +33,12 @@ class FileCompressionUtility:
                 pair[1]+= '1'
             heapq.heappush(heap,[ln[0]+rn[0]] + ln[1:] + rn[1:])
 
-        self.huffman_tree = sorted(heapq.heappop(heap)[ 1:] , key = lambda p : ( len( p[-1] ) , p))
-    # Huffman code generation
+        if heap:
+            self.huffman_tree = sorted(heapq.heappop(heap)[1:], key=lambda p: (len(p[-1]), p))
+        else:
+            self.huffman_tree = [] 
+
+        # Huffman code generation
     def generate_huffman_codes(self):
         pass
 
