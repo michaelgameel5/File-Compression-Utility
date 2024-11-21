@@ -1,5 +1,6 @@
 import collections
 import os
+import heapq
 
 class FileCompressionUtility:
     def __init__(self):
@@ -18,11 +19,21 @@ class FileCompressionUtility:
                 self.frequency_table = collections.Counter(file.read())
         except IOError as e:
             print(f"An error occurred while opening the file: {e}")
-            
+
     # Huffman tree construction
     def build_huffman_tree(self):
-        pass
+        heap = [[weight,[char,""]]for char ,weight in self.frequency_table.items()]
+        heapq.heapify(heap)
+        while len(heap) >1:
+            ln = heapq.heappop(heap)
+            rn = heapq.heappop(heap)
+            for pair in ln[1:]:
+                pair[1]+= '0'
+            for pair in rn[1:]:
+                pair[1]+= '1'
+            heapq.heappush(heap,[ln[0]+rn[0]] + ln[1:] + rn[1:])
 
+        self.huffman_tree = sorted(heapq.heappop(heap)[ 1:] , key = lambda p : ( len( p[-1] ) , p))
     # Huffman code generation
     def generate_huffman_codes(self):
         pass
@@ -31,7 +42,7 @@ class FileCompressionUtility:
     def compress_file(self, file_path, output_path):
         pass
 
-    # Save metadata
+    # Save metadata                                             
     def save_metadata(self, output_path) :
         pass
 
@@ -46,3 +57,7 @@ class FileCompressionUtility:
     # File decompression
     def decompress_file(self, compressed_path, output_path):
         pass
+
+f = FileCompressionUtility()
+f.build_frequency_table("file.txt")
+f.build_huffman_tree()
