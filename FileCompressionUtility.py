@@ -1,6 +1,7 @@
 import collections
 import os
 import heapq
+import json
 
 class Node:
     def __init__(self, char=None, freq=0):
@@ -85,11 +86,43 @@ class FileCompressionUtility:
 
     # Load metadata
     def load_metadata(self, file_path):
-        pass
+        if not os.path.exists(file_path):
+            print(f"Error: The metadata file '{file_path}' does not exist.")
+            return None
+
+        try:
+            with open(file_path, "r") as file:
+                metadata = json.load(file)
+                self.huffman_codes = metadata.get("huffman_codes", {})
+                self.frequency_table = metadata.get("frequency_table", {})
+            print("Metadata loaded successfully.")
+        except (IOError, json.JSONDecodeError) as e:
+            print(f"An error occurred while loading metadata: {e}")
+
 
     # Huffman tree reconstruction
-    def reconstruct_huffman_tree(self) :
-        pass
+    def reconstruct_huffman_tree(self):
+        if not self.huffman_codes:
+            print("Error: Huffman codes are empty. Load metadata first.")
+            return
+
+        self.huffman_tree = Node()  # Start with an empty root node
+
+        # Build the tree using the Huffman codes
+        for char, code in self.huffman_codes.items():
+            current = self.huffman_tree
+            for bit in code:
+                if bit == "0":
+                    if not current.left:
+                        current.left = Node()
+                    current = current.left
+                elif bit == "1":
+                    if not current.right:
+                        current.right = Node()
+                    current = current.right
+            # Assign the character to the leaf node
+            current.char = char
+        print("Huffman tree reconstructed successfully.")
 
     # File decompression
     def decompress_file(self, compressed_path, output_path):
